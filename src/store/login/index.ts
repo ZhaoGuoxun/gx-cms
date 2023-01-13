@@ -3,13 +3,14 @@ import type { ILoginData, ILoginRes } from '@/types'
 import { defineStore } from 'pinia'
 import { localCache } from '@/utils/Cache'
 import router from '@/router'
-import { mapMenusToRoutes } from '@/utils/map-menus'
+import { mapMenusToPermissions, mapMenusToRoutes } from '@/utils/map-menus'
 
 interface ILoginStore {
   userId: number
   token: string
   userInfo: any
   userMenus: any
+  permissions: string[]
 }
 
 const useLoginStore = defineStore('login', {
@@ -17,7 +18,8 @@ const useLoginStore = defineStore('login', {
     userId: localCache.getItem('userId'),
     token: localCache.getItem('token'),
     userInfo: {},
-    userMenus: []
+    userMenus: [],
+    permissions: []
   }),
   actions: {
     async accountLoginAction(account: ILoginData) {
@@ -45,6 +47,9 @@ const useLoginStore = defineStore('login', {
       routes.forEach(r => {
         router.addRoute('main', r)
       })
+
+      // 获取权限
+      this.permissions = mapMenusToPermissions(this.userMenus)
     },
     logoutAction() {
       localCache.removeItem('token')

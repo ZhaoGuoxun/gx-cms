@@ -1,40 +1,39 @@
 <template>
   <div class="page-view">
-    <page-search v-bind="searchConfig" @query-info="handleQuery" />
     <page-table v-bind="tableConfig" ref="pageTableRef" @new-data-click="handleAdd" @edit-data-click="handleEdit" />
     <page-dialog v-bind="dialogConfigRef" ref="pageDialogRef" @refresh="fetchPageList" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import pageSearch from '@/components/pageSearch/index.vue'
+import { getMenuData } from '@/api/main'
+import { mapMenusToTree } from '@/utils/map-menus'
 import pageTable from '@/components/pageTable/index.vue'
 import pageDialog from '@/components/pageDialog/index.vue'
 
-import searchConfig from './config/search.config'
 import tableConfig from './config/table.config'
 import dialogConfig from './config/dialog.config'
 
 import usePageTable from '@/hooks/usePageTable'
 import usePageDialog from '@/hooks/usePageDialog'
+import { computed, ref } from 'vue'
 
-import useSystemStore from '@/store/system/system'
+const { pageDialogRef, handleAdd, handleEdit } = usePageTable()
+const { pageTableRef, fetchPageList } = usePageDialog()
 
-const systemStore = useSystemStore()
-systemStore.getDepListAction()
+const menuList = ref<any>([])
+getMenuData().then(res => {
+  menuList.value = mapMenusToTree(res.data.list)
+})
 
 const dialogConfigRef = computed(() => {
   dialogConfig.formItem.forEach(item => {
     if (item.prop == 'parentId') {
-      item.options = systemStore.depList.map(o => ({ label: o.name, value: o.id })) as any
+      item.options = menuList.value
     }
   })
   return dialogConfig
 })
-
-const { pageDialogRef, handleAdd, handleEdit } = usePageTable()
-const { pageTableRef, handleQuery, fetchPageList } = usePageDialog()
 </script>
 
 <style scoped lang="less">

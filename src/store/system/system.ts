@@ -1,5 +1,4 @@
-import { getDepList } from '@/api/system/department'
-import { getRoleList } from '@/api/system/role'
+import { getRoleData, getDepartmentData } from '@/api/main'
 import { defineStore } from 'pinia'
 
 interface ISystemStore {
@@ -13,13 +12,13 @@ const useSystemStore = defineStore('system', {
     depList: []
   }),
   actions: {
-    getRoleListAction(data: any) {
-      getRoleList(data).then(res => {
+    getRoleListAction() {
+      getRoleData().then(res => {
         this.roleList = res.data.list
       })
     },
-    getDepListAction(data: any) {
-      getDepList(data).then(res => {
+    getDepListAction() {
+      getDepartmentData().then(res => {
         this.depList = res.data.list
       })
     }

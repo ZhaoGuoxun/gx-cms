@@ -3,6 +3,8 @@ import NotFound from '@/views/not-found/notFound.vue'
 import { localCache } from '@/utils/Cache'
 import { firstMenu } from '@/utils/map-menus'
 
+import nprogress from 'nprogress'
+
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -28,6 +30,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from) => {
+  nprogress.start()
   const token = localCache.getItem('token')
   if (!token && to.path.startsWith('/main')) {
     return '/login'
@@ -37,6 +40,10 @@ router.beforeEach((to, from) => {
   if (to.path == '/main') {
     return firstMenu?.path
   }
+})
+
+router.afterEach(() => {
+  nprogress.done()
 })
 
 export default router

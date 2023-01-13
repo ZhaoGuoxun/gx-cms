@@ -34,3 +34,34 @@ export const getBreadCrumps = (path: string, userMenus: any[]) => {
   menu && paths.unshift(menu)
   return paths
 }
+
+// 菜单数据转为树形数据
+export const mapMenusToTree = (menus: any[]) => {
+  const data: any = menus.map(item => {
+    return {
+      label: item.name,
+      value: item.id,
+      children: mapMenusToTree(item.children || [])
+    }
+  })
+  return data
+}
+
+// 递归获取菜单id
+export const mapMenusToIds = (menus: any[]) => {
+  const ids: number[] = []
+  menus.forEach(item => {
+    ids.push(item.id, ...mapMenusToIds(item.children || []))
+  })
+  return ids
+}
+
+// 获取所有权限
+export const mapMenusToPermissions = (menus: any[]) => {
+  const permissions: string[] = []
+  menus.forEach(item => {
+    item.permission && permissions.push(item.permission)
+    permissions.push(...mapMenusToPermissions(item.children || []))
+  })
+  return permissions
+}

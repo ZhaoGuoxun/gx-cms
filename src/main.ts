@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import 'normalize.css'
 import './assets/css/index.less'
 import 'element-plus/theme-chalk/el-message.css'
+import 'nprogress/nprogress.css'
 
 import App from './App.vue'
 import router from './router'
